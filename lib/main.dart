@@ -1,15 +1,26 @@
-import 'package:flutter/material.dart';
-import 'package:google_auth/crud_demo.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:google_auth/screens/home_page.dart';
+import 'package:google_auth/controller/main_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  SharedPreferences pref = await SharedPreferences.getInstance();
+  bool isShowHome = pref.getBool('showHome') ?? false;
+
+  runApp(MyApp(
+    isShowHome: isShowHome,
+  ));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  // ignore: prefer_typing_uninitialized_variables
+  var isShowHome;
+
+  MyApp({super.key, required this.isShowHome});
 
   // This widget is the root of your application.
   @override
@@ -19,8 +30,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
+        useMaterial3: true,
       ),
-      home: const SimplECrudDemo(),
+      home: isShowHome ? const HomePage() : const MainPage(),
     );
   }
 }
